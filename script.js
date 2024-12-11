@@ -22,14 +22,19 @@ function onError(error) {
   console.error(error);
 };
 
+// Open connection to ScaleDrone
 drone.on('open', error => {
   if (error) {
     return console.error(error);
   }
+  
+  // Subscribe to the room
   room = drone.subscribe(roomName);
   room.on('open', error => {
     if (error) {
       onError(error);
+    } else {
+      console.log('Connected to room');
     }
   });
 
@@ -37,18 +42,18 @@ drone.on('open', error => {
     console.log('MEMBERS', members);
     const isOfferer = members.length === 2;
 
-    // Notify both users that they have joined
+    // Notify others that a user has joined
     if (isOfferer) {
-      sendMessage({ type: 'userJoined' }); // Notify others that a user has joined
       remoteUserJoined = true; // Set the flag to true for the offerer
       updateRemoteUserIcon(); // Update the icon for the offerer
+      sendMessage({ type: 'userJoined' }); // Notify others that a user has joined
     }
 
     startWebRTC(isOfferer);
   });
 });
 
-// Send signaling data via Scaledrone
+// Send signaling data via ScaleDrone
 function sendMessage(message) {
   drone.publish({
     room: roomName,
@@ -127,3 +132,6 @@ window.addEventListener('load', function() {
     loadingOverlay.style.display = 'none'; // Remove from view after fading out
   }, 500); // Match the timeout with the CSS transition duration
 });
+
+// Handle ScaleDrone errors
+drone.on('error', error => console.error(error));
