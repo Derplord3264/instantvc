@@ -40,7 +40,7 @@ drone.on('open', error => {
     // Check if we are the second user to connect
     if (isOfferer) {
       remoteUserJoined = true; // Set the flag to true
-      updateRemoteUserIcon(); // Update the icon for both users
+      sendMessage({ type: 'remoteUserJoined' }); // Notify other user that remote user has joined
     }
 
     startWebRTC(isOfferer);
@@ -87,12 +87,15 @@ function startWebRTC(isOfferer) {
         if (pc.remoteDescription.type === 'offer') {
           pc.createAnswer().then(localDescCreated).catch(onError);
         }
-        updateRemoteUserIcon(); // Update icon state after setting remote description
       }, onError);
     } else if (message.candidate) {
       pc.addIceCandidate(
         new RTCIceCandidate(message.candidate), onSuccess, onError
       );
+    } else if (message.type === 'remoteUserJoined') {
+      // When receiving the message that the remote user has joined
+      remoteUserJoined = true; // Set the flag to true
+      updateRemoteUserIcon(); // Update the icon for both users
     }
   });
 }
