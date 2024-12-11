@@ -37,8 +37,9 @@
     }
 
     .wrapper {
-      width: 200px;
-      height: 60px;
+      display: flex; /* Use flexbox to align circles side by side */
+      justify-content: center; /* Center circles horizontally */
+      gap: 10px; /* Space between circles */
       position: relative;
       z-index: 1;
     }
@@ -46,10 +47,8 @@
     .circle {
       width: 20px;
       height: 20px;
-      position: absolute;
       border-radius: 50%;
       background-color: #fff;
-      left: 15%;
       transform-origin: 50%;
       animation: circle7124 .5s alternate infinite ease;
     }
@@ -72,13 +71,10 @@
     }
 
     .circle:nth-child(2) {
-      left: 45%;
       animation-delay: .2s;
     }
 
     .circle:nth-child(3) {
-      left: auto;
-      right: 15%;
       animation-delay: .3s;
     }
 
@@ -91,7 +87,6 @@
       top: 62px;
       transform-origin: 50%;
       z-index: -1;
-      left: 15%;
       filter: blur(1px);
       animation: shadow046 .5s alternate infinite ease;
     }
@@ -111,7 +106,7 @@
     }
 
     .shadow:nth-child(4) {
-      left: 45%;
+      left: 15%;
       animation-delay: .2s;
     }
 
@@ -140,11 +135,17 @@
       border: 4px solid #1e88e5; /* Light border for visibility */
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
       margin: 20px;
-      transition: transform 0.3s;
+      transition: transform 0.3s, filter 0.3s; /* Transition for filter */
     }
 
     .user-image:hover {
       transform: scale(1.05); /* Slightly enlarge on hover */
+    }
+
+    /* Grayscale effect for remote user */
+    .grayscale {
+      filter: grayscale(100%); /* Apply grayscale filter */
+      opacity: 0.5; /* Make it slightly transparent */
     }
 
     @media (max-width: 600px) {
@@ -155,6 +156,10 @@
       .user-image {
         width: 100px; /* Responsive image size */
         height: 100px;
+      }
+
+      .wrapper {
+        flex-direction: column; /* Stack circles vertically on small screens */
       }
     }
   </style>
@@ -173,7 +178,7 @@
 
   <div class="copy">Send your URL to a friend to start an audio call</div>
   <img id="localImage" src="images/user.png" alt="Local User" class="user-image" />
-  <img id="remoteImage" src="images/user.png" alt="Remote User" class="user-image" />
+  <img id="remoteImage" src="images/user.png" alt="Remote User" class="user-image grayscale" /> <!-- Grayscale class added -->
   
   <script src="script.js"></script>
   <script>
@@ -185,6 +190,13 @@
         loadingOverlay.style.display = 'none'; // Remove from view after fading out
       }, 500); // Match the timeout with the CSS transition duration
     });
+
+    // Assuming you have some mechanism to detect when the remote user joins
+    // For demonstration, we will simulate the remote user joining after 3 seconds
+    setTimeout(() => {
+      const remoteImage = document.getElementById('remoteImage');
+      remoteImage.classList.remove('grayscale'); // Remove grayscale class when remote user joins
+    }, 3000); // Simulating remote user joining after 3 seconds
   </script>
 </body>
 </html>
