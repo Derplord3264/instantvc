@@ -15,6 +15,7 @@ const configuration = {
 };
 let room;
 let pc;
+let remoteUserJoined = false; // Track if the remote user has joined
 
 function onSuccess() {};
 function onError(error) {
@@ -31,10 +32,18 @@ drone.on('open', error => {
       onError(error);
     }
   });
-  
+
   room.on('members', members => {
     console.log('MEMBERS', members);
     const isOfferer = members.length === 2;
+
+    // Check if we are the second user to connect
+    if (isOfferer) {
+      remoteUserJoined = true; // Set the flag to true
+      const remoteImage = document.getElementById('remoteImage');
+      remoteImage.classList.remove('grayscale'); // Remove grayscale class when remote user joins
+    }
+
     startWebRTC(isOfferer);
   });
 });
@@ -65,7 +74,6 @@ function startWebRTC(isOfferer) {
   navigator.mediaDevices.getUserMedia({
     audio: true,
   }).then(stream => {
-    // Add your stream to be sent to the connecting peer
     stream.getTracks().forEach(track => pc.addTrack(track, stream));
   }, onError);
 
