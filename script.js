@@ -37,10 +37,9 @@ drone.on('open', error => {
     console.log('MEMBERS', members);
     const isOfferer = members.length === 2;
 
-    // Check if we are the second user to connect
+    // Notify both users that they have joined
     if (isOfferer) {
-      remoteUserJoined = true; // Set the flag to true
-      sendMessage({ type: 'remoteUserJoined' }); // Notify other user that remote user has joined
+      sendMessage({ type: 'userJoined' }); // Notify others that a user has joined
     }
 
     startWebRTC(isOfferer);
@@ -92,8 +91,8 @@ function startWebRTC(isOfferer) {
       pc.addIceCandidate(
         new RTCIceCandidate(message.candidate), onSuccess, onError
       );
-    } else if (message.type === 'remoteUserJoined') {
-      // When receiving the message that the remote user has joined
+    } else if (message.type === 'userJoined') {
+      // When receiving the message that another user has joined
       remoteUserJoined = true; // Set the flag to true
       updateRemoteUserIcon(); // Update the icon for both users
     }
