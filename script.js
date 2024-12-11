@@ -40,8 +40,7 @@ drone.on('open', error => {
     // Check if we are the second user to connect
     if (isOfferer) {
       remoteUserJoined = true; // Set the flag to true
-      const remoteImage = document.getElementById('remoteImage');
-      remoteImage.classList.remove('grayscale'); // Remove grayscale class when remote user joins
+      updateRemoteUserIcon(); // Update the icon for both users
     }
 
     startWebRTC(isOfferer);
@@ -78,6 +77,7 @@ function startWebRTC(isOfferer) {
   }, onError);
 
   room.on('data', (message, client) => {
+    // Message was sent by us
     if (client.id === drone.clientId) {
       return;
     }
@@ -87,6 +87,7 @@ function startWebRTC(isOfferer) {
         if (pc.remoteDescription.type === 'offer') {
           pc.createAnswer().then(localDescCreated).catch(onError);
         }
+        updateRemoteUserIcon(); // Update icon state after setting remote description
       }, onError);
     } else if (message.candidate) {
       pc.addIceCandidate(
@@ -103,3 +104,22 @@ function localDescCreated(desc) {
     onError
   );
 }
+
+// Function to update the remote user's icon
+function updateRemoteUserIcon() {
+  const remoteImage = document.getElementById('remoteImage');
+  if (remoteUserJoined) {
+    remoteImage.classList.remove('grayscale'); // Remove grayscale class
+  } else {
+    remoteImage.classList.add('grayscale'); // Add grayscale class
+  }
+}
+
+// Hide the loading overlay once the page has fully loaded
+window.addEventListener('load', function() {
+  const loadingOverlay = document.getElementById('loadingOverlay');
+  loadingOverlay.style.opacity = '0'; // Start fading out
+  setTimeout(() => {
+    loadingOverlay.style.display = 'none'; // Remove from view after fading out
+  }, 500); // Match the timeout with the CSS transition duration
+});
