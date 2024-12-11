@@ -40,6 +40,8 @@ drone.on('open', error => {
     // Notify both users that they have joined
     if (isOfferer) {
       sendMessage({ type: 'userJoined' }); // Notify others that a user has joined
+      remoteUserJoined = true; // Set the flag to true for the offerer
+      updateRemoteUserIcon(); // Update the icon for the offerer
     }
 
     startWebRTC(isOfferer);
