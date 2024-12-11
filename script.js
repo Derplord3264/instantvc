@@ -40,16 +40,19 @@ drone.on('open', error => {
 
   room.on('members', members => {
     console.log('MEMBERS', members);
-    const isOfferer = members.length === 2;
+    const userCount = members.length;
 
-    // Notify others that a user has joined
-    if (isOfferer) {
-      remoteUserJoined = true; // Set the flag to true for the offerer
-      updateRemoteUserIcon(); // Update the icon for the offerer
-      sendMessage({ type: 'userJoined' }); // Notify others that a user has joined
+    // Update remoteUserJoined based on the number of members
+    if (userCount === 2) {
+      remoteUserJoined = true; // Set the flag to true for both users
+      updateRemoteUserIcon(); // Update the icon for both users
+      sendMessage({ type: 'userJoined' }); // Notify that a user has joined
+    } else {
+      remoteUserJoined = false; // Set the flag to false if only one user is present
+      updateRemoteUserIcon(); // Update the icon for the first user
     }
 
-    startWebRTC(isOfferer);
+    startWebRTC(userCount === 2); // Start WebRTC if there are two users
   });
 });
 
